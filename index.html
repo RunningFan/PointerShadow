@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html onselectstart="return false">
+	<head>
+		<meta charset="utf-8" />
+		<title>鼠标光圈</title>
+		<link rel="stylesheet" href="css/PointerShadow.css" />
+	</head>
+	<body>
+		<input type="button" value="手动移动" id="but"/>
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js" ></script>
+		<script>
+			$(function(){
+				var index=0;
+				var src;
+				var ulock=true;
+				var nlock=true;
+				var p=null;
+				$(document).mousedown(function(){
+					$(this).bind("mousemove",function(e){
+						if($("#but").val()=="自动移动"){
+							index++;
+					        src=Math.floor(index/5)%5;
+						    $("body").append('<img id="img'+index+'" src="img/'+src+'.png" ondragstart="return false" style="top:'+(e.clientY-35)+'px;left:'+(e.clientX-35)+'px;"/>')
+					        $("#img"+index).stop(true).animate({
+					    	top:(e.clientY-235)+"px",
+					    	width:"0px",
+					    	height:"0px"
+					    },1500,function(){
+					    	$(this).remove();
+					    });
+						}
+					});
+				}).mouseup(function(){
+					$(this).unbind("mousemove");
+				});
+				var wX=$(window).width();
+				var wY=$(window).height();
+				var x=Math.random()*(wX-70);
+				var y=Math.random()*(wY-70);
+				$(window).resize(function(){
+					 wX=$(window).width();
+				     wY=$(window).height();
+				});
+				auto();
+				$("#but").click(function(){
+					if($(this).val()=="手动移动"){
+						clearInterval(p);
+					    $(this).val("自动移动");
+					}else{
+						auto();
+						$(this).val("手动移动");
+					}
+				});
+				function auto(){
+				p=setInterval(function(){
+				index++;
+			    src=Math.floor(index/5)%5;
+			    $("body").append('<img id="img'+index+'" src="img/'+src+'.png" ondragstart="return false" style="top:'+y+'px;left:'+x+'px;"/>')
+			    $("#img"+index).stop(true).animate({
+			    	        top:(y+35)+"px",
+			    	        left:(x+35)+"px",
+					    	width:"0px",
+					    	height:"0px"
+					    },1500,function(){
+					    	$(this).remove();
+					    });
+					    if(x>(wX-70)){
+					    	ulock=true;   //大于最大宽度限制
+					    }else if(x<0){
+					    	ulock=false;  //小于最小宽度限制
+					    }
+					    if(y>(wY-70)){
+					    	nlock=true;   //大于最大宽度限制
+					    }else if(y<0){
+					    	nlock=false;  //小于最小宽度限制
+					    }
+					    ulock?(x-=Math.random()*30):(x+=Math.random()*30);
+					    nlock?(y-=Math.random()*30):(y+=Math.random()*30);
+				},50);
+				}
+				
+			});
+		</script>
+	</body>
+</html>
